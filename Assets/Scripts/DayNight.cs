@@ -16,7 +16,7 @@ public class DayNight : MonoBehaviour
 
     void Start()
     {
-        sunAngle = 0;
+        sunAngle = 35;
         eastAngle = 180; // Default 0
         nightHours = (24f - dayHours) * 7.5f;
         sunIntensity = maxIntensity;
@@ -25,8 +25,8 @@ public class DayNight : MonoBehaviour
 
     void Update()
     {
-        Util.DebugMe("nightHours", nightHours.ToString());
-        Util.DebugMe("sunIntensity", sunIntensity.ToString());
+        //Util.DebugMe("nightHours", nightHours.ToString());
+        //Util.DebugMe("sunIntensity", sunIntensity.ToString());
 
         if (isDay)
         {

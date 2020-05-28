@@ -11,19 +11,17 @@ public class TrackMgr : MonoBehaviour
     public int rowsMax = 10;
     public float quadSizeX = 10;
     public float quadSizeZ = 10;
-    private readonly int[] tris = new int[6] { 0, 2, 1, 2, 3, 1 };
-    private readonly Vector2[] uv = new Vector2[4] { Vector2.zero, Vector2.right, Vector2.up, Vector2.one };
+    public int maxTileObjs = 4;
 
     private Control control;
+    private int trackSegment;
     private List<Vector3> rowPoints = new List<Vector3>();
     private List<Vector3> rowPointsNew = new List<Vector3>();
-    private int trackSegment;
     private Mesh mesh;
     private GameObject tempQuad;
     private GameObject tempObj;
-    // private List<GameObject> rowQuads = new List<GameObject>();
-    // public List<TrackSegment> segmentsData = new List<TrackSegment>();
-    // public List<GameObject> segmentsObj = new List<GameObject>();
+    private readonly int[] tris = new int[6] { 0, 2, 1, 2, 3, 1 };
+    private readonly Vector2[] uv = new Vector2[4] { Vector2.zero, Vector2.right, Vector2.up, Vector2.one };
     private enum CurveTypes
     {
         straightAhead,
@@ -60,14 +58,13 @@ public class TrackMgr : MonoBehaviour
         trackSegment = rowSegments / 2;
         startingPoint = rowPoints[trackSegment] + (Vector3.right * quadSizeX / 2) + (Vector3.forward * quadSizeZ / 2);
 
-        for (int i = 0; i < rowsMax; i++) NewSegmentsRow(); // rowsMax
-        // NewSegmentsRow();
+        for (int i = 0; i < rowsMax; i++) NewSegmentsRow();
         control.player.transform.position = startingPoint;
     }
 
     private void Update()
     {
-        if (rowPoints[trackSegment].z < Control.playerPosition.z + (quadSizeZ * 25))
+        if (rowPoints[trackSegment].z < Control.playerPosition.z + (quadSizeZ * 50))
             NewSegmentsRow();
     }
 
@@ -95,13 +92,14 @@ public class TrackMgr : MonoBehaviour
             {
                 slopeDuration = Random.Range(5, 11);
                 slopeRandom = Random.Range(1, 5);
-                if      (slopeRandom == (int)SlopeTypes.smallDown) slopeAmount = quadSizeZ * -1f / slopeDuration; // small = 1 width across N duration
+                if (slopeRandom == (int)SlopeTypes.smallDown) slopeAmount = quadSizeZ * -1f / slopeDuration; // small = 1 width across N duration
                 else if (slopeRandom == (int)SlopeTypes.smallUp) slopeAmount = quadSizeZ * 1f / slopeDuration;
                 else if (slopeRandom == (int)SlopeTypes.sharpDown) slopeAmount = quadSizeZ * -2f / slopeDuration; // sharp = 2 widht across N duration
                 else if (slopeRandom == (int)SlopeTypes.sharpUp) slopeAmount = quadSizeZ * 2f / slopeDuration;
                 slopeOffset = Vector3.up * slopeAmount;
             }
             else slopeOffset = Vector3.zero;
+            //slopeOffset = Vector3.up * 2;
         }
         else slopeDuration--;
 
@@ -119,16 +117,15 @@ public class TrackMgr : MonoBehaviour
         for (int i = trackSegment + 1; i < rowSegments + 1; i++) rowPointsNew[i] = rowPoints[i] + roadOffset;
         for (int i = trackSegment + 1; i < rowSegments; i++) {
             CreateQuadMesh(grassPrefab, rowPoints[i], rowPoints[i + 1], rowPointsNew[i], rowPointsNew[i + 1]);
-            //CreateTerrainObject((i-trackSegment)/3, rowPoints[i], rowPoints[i + 1], rowPointsNew[i], rowPointsNew[i + 1]);
+            CreateTerrainObject((i-trackSegment)/2, rowPoints[i], rowPoints[i + 1], rowPointsNew[i], rowPointsNew[i + 1]);
         }
         // Calculate left ground points and draw quads
         for (int i = trackSegment - 1; i >= 0; i--) rowPointsNew[i] = rowPoints[i] + roadOffset;
         for (int i = trackSegment - 1; i >= 0; i--) {
             CreateQuadMesh(grassPrefab, rowPoints[i], rowPoints[i + 1], rowPointsNew[i], rowPointsNew[i + 1]);
-            //CreateTerrainObject((trackSegment-i)/3, rowPoints[i], rowPoints[i + 1], rowPointsNew[i], rowPointsNew[i + 1]);
+            CreateTerrainObject((trackSegment-i)/2, rowPoints[i], rowPoints[i + 1], rowPointsNew[i], rowPointsNew[i + 1]);
         }
 
-        //    // rowQuads.Add(tempQuad);
         for (int i = 0; i < rowSegments + 1; i++) rowPoints[i] = rowPointsNew[i];
     }
     public void CreateQuadMesh(GameObject segmentPrefab, Vector3 pointX0Z0, Vector3 pointX1Z0, Vector3 pointX0Z1, Vector3 pointX1Z1)
@@ -141,17 +138,38 @@ public class TrackMgr : MonoBehaviour
         mesh.uv = uv;
         tempQuad = Instantiate(segmentPrefab, Vector3.zero, Quaternion.identity);
         tempQuad.GetComponent<MeshFilter>().mesh = mesh;
+
+        // Required added steps to keep position in transform:
+        // - doing nothing = right position but transform.position zero
+        // - assign transform.position only = GO with right transform.position but mesh moves position
+        tempQuad.transform.position = pointX0Z0;
+        vertices[0] = pointX0Z0 - pointX0Z0;
+        vertices[1] = pointX1Z0 - pointX0Z0;
+        vertices[2] = pointX0Z1 - pointX0Z0;
+        vertices[3] = pointX1Z1 - pointX0Z0;
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = tris;
+        mesh.RecalculateNormals();
+        mesh.uv = uv; // this maybe is the only one not required
+        //
         tempQuad.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+        // TODO: Incorporar PoolMgr para evitar creación y destrucción de tantos objetos. Ej:
+        // GameObject obj = PoolMgr.Instance.RequestObject();
+        // y en lugar de destroy:
+        // this.gameObject.SetActive(false);
     }
 
     public void CreateTerrainObject(int objects, Vector3 pointX0Z0, Vector3 pointX1Z0, Vector3 pointX0Z1, Vector3 pointX1Z1)
     {
+        if (objects > maxTileObjs) objects = maxTileObjs;
+
         for (int i = 0; i < objects; i++)
         {
             int randomObj = Random.Range(0, terrainPrefabs.Length);
             tempObj = Instantiate(terrainPrefabs[randomObj], Vector3.zero, Quaternion.identity);
             tempObj.transform.SetParent(tempQuad.transform);
-            //tempObj.transform.Translate(pos + Vector3.right * Random.Range(0, quadSizeX) + Vector3.forward * Random.Range(0, quadSizeZ));
             tempObj.transform.Translate(pointX0Z0 + (pointX0Z1 - pointX0Z0) * Random.value + (pointX1Z0 - pointX0Z0) * Random.value);
 
             if (randomObj == 0) // StoneFlat

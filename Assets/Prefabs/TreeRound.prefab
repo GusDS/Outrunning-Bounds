@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7872804884746704687}
   - component: {fileID: 2422337926158379765}
   m_Layer: 0
-  m_Name: Tree
+  m_Name: TreeRound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,7 +51,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
+  m_DynamicOccludee: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1

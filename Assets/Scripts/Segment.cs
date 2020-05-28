@@ -11,7 +11,7 @@ public class Segment : MonoBehaviour
 
     void Update()
     {
-        //if (transform.position.z + 20 < Control.playerPosition.z)
-        //    Destroy(gameObject);
+        if (transform.position.z + 200 < Control.playerPosition.z)
+            Destroy(gameObject);
     }
 }

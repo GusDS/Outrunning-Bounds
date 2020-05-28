@@ -10,7 +10,7 @@ namespace KartGame.KartSystems
     public class KartBounce : MonoBehaviour
     {
         /// <summary>
-        /// Represents a single frame where the bounce was actually triggered. Use this as a flag
+        /// Represents a single frame where the bounce was actually triggered. Use this as a flag 
         /// to detect when bouncing was invoked. This flag is managed by the VehicleBounce.
         /// </summary>
         public bool BounceFlag { get; private set; }
@@ -63,8 +63,8 @@ namespace KartGame.KartSystems
                 if (Physics.Raycast(origin, direction, out RaycastHit hit, RayDistance, CollisionLayer) && Time.time > resumeTime && !hasCollided && kart.LocalSpeed() > 0)
                 {
                     // If the hit normal is pointing up, then we don't want to bounce
-                    if (Vector3.Dot(hit.normal, Vector3.up) > 0.2f)
-                    {
+                    if (Vector3.Dot(hit.normal, Vector3.up) > 0.2f) 
+                    { 
                         return;
                     }
 
@@ -104,7 +104,7 @@ namespace KartGame.KartSystems
 
         void LateUpdate()
         {
-            if (Time.time > resumeTime && hasCollided)
+            if (Time.time > resumeTime && hasCollided) 
             {
                 kart.SetCanMove(true);
                 hasCollided = false;

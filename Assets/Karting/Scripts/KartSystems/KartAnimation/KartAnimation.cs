@@ -108,9 +108,9 @@ namespace KartGame.KartSystems
             m_InverseRearWheelRadius = 1f / rearWheelRadius;
         }
 
-        void FixedUpdate()
+        void FixedUpdate() 
         {
-            m_SmoothedSteeringInput = Mathf.MoveTowards(m_SmoothedSteeringInput, kartController.Input.x,
+            m_SmoothedSteeringInput = Mathf.MoveTowards(m_SmoothedSteeringInput, kartController.Input.x, 
                 steeringAnimationDamping * Time.deltaTime);
         }
 

@@ -13,6 +13,7 @@ namespace KartGame.KartSystems
     /// The  movement of the kart depends on the KartStats.  These have a default value but can be adjusted by anything implementing
     /// the IKartModifier interface.
     /// </summary>
+    ///
     [RequireComponent (typeof(IInput))] [RequireComponent (typeof(Rigidbody))]
     public class KartMovement : MonoBehaviour, IKartCollider, IMovable, IKartInfo
     {

@@ -13,6 +13,7 @@ namespace KartGame.KartSystems
         /// <summary>
         /// A class representing an individual wheel on a kart.  This can be used to represent either front or back wheels.
         /// </summary>
+        ///
         [Serializable] public class Wheel
         {
             [Tooltip ("A reference to the transform of the wheel.")]

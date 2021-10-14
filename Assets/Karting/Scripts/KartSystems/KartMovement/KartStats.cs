@@ -7,6 +7,7 @@ namespace KartGame.KartSystems
     /// <summary>
     /// A class representing the fundamental stats required to move the kart.  They are separated in this way in order to easily adjust any part of how the kart behaves.
     /// </summary>
+    ///
     [Serializable] public struct KartStats
     {
         [Tooltip ("The rate at which the kart increases its forward speed when the accelerate button is held and the brake button isn't held.")]

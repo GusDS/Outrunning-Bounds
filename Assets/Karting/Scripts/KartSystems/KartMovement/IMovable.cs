@@ -9,6 +9,7 @@ namespace KartGame.KartSystems
     /// <summary>
     /// Should be implemented by things that are controlled by user input that can be moved by something other than the user.
     /// </summary>
+    ///
     public interface IMovable : IControllable
     {
         /// <summary>

@@ -181,12 +181,19 @@ namespace KartGame.KartSystems
             for (int i = 0; i < m_Inputs.Length; i++)
             {
                 var inputSource = m_Inputs[i];
-                Vector2 current = inputSource.GenerateInput();
+                Vector2 current = GenerateInput(); //inputSource.GenerateInput();
                 if (current.sqrMagnitude > 0)
                 {
                     Input = current;
                 }
             }
+        }
+
+        public Vector2 GenerateInput()
+        {
+            return new Vector2(Input.x, Input.y);
+            // return new Vector2(finalStats.Steer, finalStats.Acceleration);
+            // return new Vector2(steering, acceleration);
         }
 
         void TickPowerups()

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.ProBuilder;
+// using UnityEngine.ProBuilder;
 using UnityEngine.Rendering;
 
 public static class MeshCombineUtility
@@ -86,11 +86,11 @@ public static class MeshCombineUtility
             }
 
             // Destroy probuilder component if present
-            ProBuilderMesh pbm = meshRenderer.GetComponent<ProBuilderMesh>();
-            if(pbm)
-            {
-                GameObject.Destroy(pbm);
-            }
+            // ProBuilderMesh pbm = meshRenderer.GetComponent<ProBuilderMesh>();
+            // if(pbm)
+            // {
+            //     GameObject.Destroy(pbm);
+            // }
 
             switch (disposeMethod)
             {
